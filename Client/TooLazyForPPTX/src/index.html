@@ -8,7 +8,51 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>Presenter</title>
+  <script>
+      function register(){
+        var url = "http://localhost:";
+        var audio = "audioFileXXX"
+      }
+
+      superagent
+        .post(url)
+        .send(user)
+        .end(function(err,res){
+          if (err || !res.ok) {
+            console.log('not ok:');
+            console.log(err);
+            console.log(res);
+          } else {
+            console.log('ok:');
+            console.log(res.body);
+
+            
+          }
+        })
+      
+      
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          const mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          const audioChunks = [];
+          mediaRecorder.addEventListener("dataavailable", event => {
+            audioChunks.push(event.data);
+          });
+
+          mediaRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks);
+          });
+
+          setTimeout(() => {
+            mediaRecorder.stop();
+            
+          }, 3000);
+        });
+      </script>
   <base href="/">
+  
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
