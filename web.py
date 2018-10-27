@@ -28,13 +28,13 @@ def auth():
     else:
         print("known user")
 
-    address = 'localhost/' + session_id
+    address = 'ws://localhost/' + session_id
     print(address)
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    asyncio.get_event_loop().run_until_complete(
-        websockets.serve(connection, address, 8765))
-    asyncio.get_event_loop().run_forever()
+    # loop = asyncio.new_event_loop()
+    # asyncio.set_event_loop(loop)
+    # asyncio.get_event_loop().run_until_complete(
+    #     websockets.serve(connection, address, 8765))
+    # asyncio.get_event_loop().run_forever()
     # SOCKET
     return address + ":8765"
 
