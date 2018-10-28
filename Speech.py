@@ -13,17 +13,6 @@ from six.moves import queue
 RATE = 16000
 CHUNK = int(RATE / 10)  # 100ms
 
-from google.cloud import storage
-
-# Explicitly use service account credentials by specifying the private key
-# file.
-storage_client = storage.Client.from_service_account_json(
-    'C:\\Users\\RealityShift24\\PycharmProjects\\TooLazyForPPTX\\TooLazyForPPTX-3785c34de4cc.json')
-
-# Make an authenticated API request
-buckets = list(storage_client.list_buckets())
-print(buckets)
-
 class MicrophoneStream(object):
     """Opens a recording stream as a generator yielding the audio chunks."""
     def __init__(self, rate, chunk):
@@ -150,7 +139,7 @@ def main():
     language_code = 'en-US'  # a BCP-47 language tag
 
     import os
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "C:\\Users\\RealityShift24\\PycharmProjects\\TooLazyForPPTX\\TooLazyForPPTX-3785c34de4cc.json"
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "C:\\Users\\RealityShift24\\TooLazyForPPTX-3785c34de4cc.json"
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
