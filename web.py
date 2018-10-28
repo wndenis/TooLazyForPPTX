@@ -5,13 +5,12 @@ import uuid
 import nltk
 import heapq
 from google_images_download import google_images_download
+
 TEXT = ""
 OLD_TEXT = ""
-SIMPLIFIED_TEXT = ""
 TITLE = ""
 IMAGE_ENTITY = ""
 IMAGE_LINK = ""
-
 img_google_response = google_images_download.googleimagesdownload()
 
 app = Flask(__name__)
@@ -23,47 +22,41 @@ def index():
 
 @app.route('/update', methods=["GET", "POST"])
 def getSlides():
-    global SIMPLIFIED_TEXT, TEXT, OLD_TEXT
+    global TEXT, OLD_TEXT, COMMENT, IMAGE_LINK, IMAGE_ENTITY, TITLE
+
+    if re.search(r'\b(следующий слайд|далее|next|go further|go forward)\b', TEXT, re.I):
+        TITLE = "  "
+        IMAGE_LINK = "  "
+        IMAGE_ENTITY = "  "
+        TEXT = ""
+
+    titleres = re.search(
+        "(the )?(заголовок|title is|theme is|topic is|let's talk about|let's speak about|давайте поговорим о)( how| a| the| an|)? ([\wа-яА-Я]+)",
+        TEXT, re.I)
+    if titleres:
+        TITLE = titleres.group(4)
+        TEXT = TEXT[:titleres.start()] + TEXT[titleres.end():]
+        if len(TITLE) > 2:
+            IMAGE_ENTITY = TITLE
+            IMAGE_LINK = img_google_response.download({"limit": 1, "keywords": IMAGE_ENTITY,
+                                                       "time": "past-7-days", "print_urls": True})
+
+    img2res = re.search(
+        "(изображени[ея]|выгляд[ия]т)|((image|picture) of( how| a| the| an|)? ([\wа-яА-Я]+)(looks like)?)",
+        TEXT, re.I)
+    # boy blowing on candles
+    if img2res:
+        print("*" * 60)
+        if len(img2res.group(5)) > 2:
+            IMAGE_ENTITY = img2res.group(5)
+            TEXT = TEXT[:img2res.start()] + TEXT[img2res.end():]
+            IMAGE_LINK = img_google_response.download({"limit": 1, "keywords": IMAGE_ENTITY,
+                                                       "time": "past-7-days", "print_urls": True})
+            print("#######:\t" + TEXT)
+
     print("SENDING: " + TEXT)
-    if not True and (OLD_TEXT == TEXT):
-        OLD_TEXT = TEXT
-        std_text = re.sub(r'\[[0-9]*\]', ' ', TEXT)
-        std_text = re.sub(r'\s+', ' ', std_text)
 
-        formatted_text = re.sub('[^a-zA-Z]', ' ', std_text)
-        formatted_text = re.sub(r'\s+', ' ', formatted_text)
-
-        sentences = nltk.sent_tokenize(formatted_text)
-
-        stopwords = nltk.corpus.stopwords.words('english')
-        word_frequencies = {}
-        for word in nltk.word_tokenize(formatted_text):
-            if word not in stopwords:
-                if word not in word_frequencies.keys():
-                    word_frequencies[word] = 1
-                else:
-                    word_frequencies[word] += 1
-
-        maximum_frequency = max(word_frequencies.values())
-
-        for word in word_frequencies.keys():
-            word_frequencies[word] = (word_frequencies[word] / maximum_frequency)
-
-        sentence_scores = {}
-        for sent in sentences:
-            for word in nltk.word_tokenize(sent.lower()):
-                if word in word_frequencies.keys():
-                    if len(sent.split(' ')) < 30:
-                        if sent not in sentence_scores.keys():
-                            sentence_scores[sent] = word_frequencies[word]
-                        else:
-                            sentence_scores[sent] += word_frequencies[word]
-
-        summary_sentences = heapq.nlargest(2, sentence_scores, key=sentence_scores.get)
-        summary = ' '.join(summary_sentences)
-        SIMPLIFIED_TEXT = summary
-
-    return jsonify({"text": TEXT, "title": TITLE, "image_link": IMAGE_LINK, "simplified_text": SIMPLIFIED_TEXT})
+    return jsonify({"text": TEXT, "title": TITLE, "image_link": IMAGE_LINK})
 
 # @app.route('/auth/', methods=['GET'])
 # def auth():
@@ -219,44 +212,18 @@ def listen_print_loop(responses):
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
             num_chars_printed = 0
-        if re.search(r'\b(следующий слайд|далее|next|go further|go forward)\b', transcript, re.I):
-            transcript = "  "
-            TITLE = "  "
-            IMAGE_LINK = "  "
-            IMAGE_ENTITY = "  "
-            SIMPLIFIED_TEXT = "  "
 
-        titleres = re.search("(заголовок|title is|theme is) ([\wа-яА-Я]+)", transcript, re.I)
-        if titleres:
-            TITLE = titleres.group(2)
-            transcript = transcript[:titleres.start(2)] + transcript[titleres.end(2):]
-            if len(transcript) == 0:
-                transcript = " "
-
-        img2res = re.search("((image|picture) of (how|)) ([\wа-яА-Я]+) looks like", transcript, re.I)
-        #boy blowing on candles
-        if img2res:
-            print("*" * 60)
-            if len(img2res.group(3)) > 2:
-                IMAGE_ENTITY = img2res.group(3)
-                transcript = transcript[:img2res.start(3)] + transcript[img2res.end(3):]
-                if len(transcript) == 0:
-                    transcript = " "
-                IMAGE_LINK = img_google_response.download({"limit": 1, "keywords": IMAGE_ENTITY,
-                                                           "time": "past-7-days", "print_urls": True})
-                print("#######:\t" + transcript)
-
-        imgres = re.search("(изображени[ея]|выглядит|picture of|image of) ([\wа-яА-Я]+)", transcript, re.I)
-        if imgres:
-            print("*" * 60)
-            if len(imgres.group(2)) > 2:
-                IMAGE_ENTITY = imgres.group(2)
-                transcript = transcript[:imgres.start(2)] + transcript[imgres.end(2):]
-                if len(transcript) == 0:
-                    transcript = " "
-                IMAGE_LINK = img_google_response.download({"limit": 1, "keywords": IMAGE_ENTITY,
-                                                                     "time": "past-7-days", "print_urls": True})
-                print("#######:\t" + transcript)
+            # imgres = re.search("(изображени[ея]|выглядит|picture of|image of) ([\wа-яА-Я]+)", transcript, re.I)
+            # if imgres:
+            #     print("*" * 60)
+            #     if len(imgres.group(2)) > 3:
+            #         IMAGE_ENTITY = imgres.group(2)
+            #         transcript = transcript[:imgres.start(2)] + transcript[imgres.end(2):]
+            #         if len(transcript) == 0:
+            #             transcript = " "
+            #         IMAGE_LINK = img_google_response.download({"limit": 1, "keywords": IMAGE_ENTITY,
+            #                                                              "time": "past-7-days", "print_urls": True})
+            #         print("#######:\t" + transcript)
 
 
 
