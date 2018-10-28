@@ -2,10 +2,13 @@ from __future__ import division
 import speech_recognition as sr
 from flask import Flask, render_template, request, make_response
 from flask.json import jsonify
+import os
 import uuid
 import Speech
 
 TEXT = ""
+TITLE = ""
+IMAGE_LINK = ""
 
 app = Flask(__name__)
 
@@ -23,7 +26,7 @@ def index():
 @app.route('/update', methods=["GET", "POST"])
 def getSlides():
     print("SENDING: " + TEXT)
-    return jsonify({"data": TEXT})
+    return jsonify({"text": TEXT, "title": TITLE, "image_link": IMAGE_LINK})
 
 # @app.route('/auth/', methods=['GET'])
 # def auth():
@@ -167,20 +170,36 @@ def listen_print_loop(responses):
         overwrite_chars = ' ' * (num_chars_printed - len(transcript))
 
         if not result.is_final:
-            sys.stdout.write(transcript + "\n")  # + overwrite_chars + '\r')
-            sys.stdout.flush()
+            pass
+            # sys.stdout.write(transcript + "\n")  # + overwrite_chars + '\r')
+            # sys.stdout.flush()
 
-            num_chars_printed = len(transcript)
+            # num_chars_printed = len(transcript)
 
         else:
             #print(transcript + overwrite_chars)
 
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
-            if re.search(r'\b(exit|quit)\b', transcript, re.I):
-                print('Exiting..')
-                break
             num_chars_printed = 0
+        if re.search(r'\b(следующий слайд|далее)\b', transcript, re.I):
+            transcript = "     "
+        if re.search(r'\b(exit|quit|следующий слайд)\b', transcript, re.I):
+            transcript = "     "
+        imgres = re.search("изображени[ея] ([\wа-яА-Я]+)", transcript, re.I)
+        if imgres:
+            print("*" * 60)
+            entity = imgres.group(1)
+            print(entity)
+            transcript = re.sub("изображени[ея] ([\wа-яА-Я]+)", "", transcript)
+            if len(transcript) == 0:
+                transcript = " "
+            print("#######:\t" + transcript)
+
+
+        #print("%s %s" % (transcript, len(transcript)))
+        if len(transcript) == 0:
+            transcript = TEXT
         TEXT = transcript
 
 
@@ -189,7 +208,6 @@ def main():
     # for a list of supported languages.
     #language_code = 'en-US'  # a BCP-47 language tag
     language_code = 'ru-RU'  # a BCP-47 language tag
-    import os
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "C:\\Users\\RealityShift24\\TooLazyForPPTX-3785c34de4cc.json"
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
@@ -213,11 +231,11 @@ def main():
 import threading
 import time
 def voiceControl():
-    while True:
-        try:
-            main()
-        except:
-            print("restart voice")
+    try:
+        print("Voice started")
+        main()
+    except Exception as e:
+        print("restart voice: %s" % e)
 
 
 voice_thread = threading.Thread(target=voiceControl)

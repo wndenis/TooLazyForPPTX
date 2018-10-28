@@ -9,21 +9,25 @@
             @import url('https://fonts.googleapis.com/css?family=Comfortaa&subset=cyrillic,cyrillic-ext');
         </style>
     </head>
-    <body onload="updateDynText();">
-        <div style="text-align: center;">
-            <b>Hello there!</b>
-            <br>
-            This is mock page for "TooLazyForPPTX"!
-            <br>
-        </div>
+    <body>
+        <!--<div style="text-align: center;">-->
+            <!--<b>Hello there!</b>-->
+            <!--<br>-->
+            <!--This is mock page for "TooLazyForPPTX"!-->
+            <!--<br>-->
+        <!--</div>-->
         <div class="add-info">
-            <span class="rightfloat">Order online <span class="red">or call
-            <span id="dyntext"></span></span>
-            </span>
+            <div style="text-align: center; font-size: 48pt">
+                <span id="dyntitle"></span>
+            </div>
+
+            <div style="text-align: left; font-size: 36pt">
+                <span id="dyntext"></span>
+            </div>
         </div>
         <script>
-            function updateDynText(text) {
-                document.getElementById("dyntext").innerHTML = text;
+            function updateDynText(id, text) {
+                document.getElementById(id).innerHTML = text;
             }
             function httpGetAsync(theUrl, callback)
             {
@@ -38,9 +42,10 @@
 
             function response(text)
             {
-                updateDynText(text.json["data"]);
-                console.log(text.json);
-                console.log(text);
+                let parsedtext = JSON.parse(text);
+                updateDynText("dyntext", parsedtext["text"]);
+                updateDynText("dyntitle", parsedtext["title"]);
+                console.log(parsedtext);
             }
 
             function sendData(data) {
@@ -79,34 +84,14 @@
             }
 
             setInterval(() => {
-            var audioBlob;
-              navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                  const mediaRecorder = new MediaRecorder(stream);
-                  mediaRecorder.start();
-
-                  const audioChunks = [];
-                  mediaRecorder.addEventListener("dataavailable", event => {
-                    audioChunks.push(event.data);
-                  });
-
-                  mediaRecorder.addEventListener("stop", () => {
-                    audioBlob = new Blob(audioChunks);
-                  });
-
-                  setTimeout(() => {
-                    mediaRecorder.stop();
-                    console.log("done");
-
-                    var form = new FormData();
-                    form.append('fname', "123123123");
+                    // mediaRecorder.stop();
+                    // console.log("done");
+                    // var form = new FormData();
+                    // form.append('fname', "123123123");
                     //sendData("TEST")
                     // GET DATA
-                    httpGetAsync("/updates", response)
-
-                  }, 1000);
-
-                });}, 1000)
+                    httpGetAsync("/update", response)
+                  }, 250);
 
         </script>
         <!--<script src="/static/recorder.js"></script>-->
