@@ -1,77 +1,50 @@
-* {
-  padding: 0;
-  margin: 0;
-}
-a {
-  color: #337ab7;
-}
-p {
-  margin-top: 1rem;
-}
-a:hover {
-  color:#23527c;
-}
-a:visited {
-  color: #8d75a3;
-}
 body {
-  margin: 1rem;
-  padding: 1rem;
   font-family: 'Comfortaa', cursive;
-  max-width: 28rem;
-  margin: 0 auto;
-  position: relative;
-    background-color: #d4dcde;
 }
-#controls {
-  display: flex;
-  margin-top: 2rem;
+#dyntitle {
+  background-color: rgb(20, 20, 20);
+   text-align: center;
+   font-size: 60px;
+    font-style: normal;
+    color: #d5d8d2;
+    text-transform: capitalize;
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 15%;
+   padding-top: 14px;
+    vertical-align: text-top;
 }
-button {
-  flex-grow: 1;
-  height: 2.5rem;
-  min-width: 2rem;
-  border: none;
-  border-radius: 0.15rem;
-  background: #ed341d;
-  margin-left: 2px;
-  box-shadow: inset 0 -0.15rem 0 rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color:#ffffff;
-  font-weight: bold;
-  font-size: 1rem;
+
+#dyntext {
+  /*background-color: rgb(218, 221, 215);*/
+   text-align: left;
+    margin-top: 20px;
+   vertical-align: center;
+   font-size: 40px;
+   position: absolute;
+   top: 20%;
+   left: 5%;
+   width: 50%;
+   height: 85%;
+   padding: 5px;
 }
-button:hover, button:focus {
-  outline: none;
-  background: #c72d1c;
+
+#dynimg {
+  /*background-color: rgb(21, 21, 221);*/
+   text-align: center;
+    margin-top: 20px;
+   vertical-align: center;
+   font-size: 30px;
+   position: absolute;
+   top: 20%;
+   left: 50%;
+   width: 50%;
+   height: 85%;
 }
-button::-moz-focus-inner {
-  border: 0;
-}
-button:active {
-  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2);
-  line-height: 3rem;
-}
-button:disabled {
-  pointer-events: none;
-  background: lightgray;
-}
-button:first-child {
-  margin-left: 0;
-}
-audio {
-  display: block;
-  width: 100%;
-  margin-top: 0.2rem;
-}
-li {
-  list-style: none;
-  margin-bottom: 1rem;
-}
-#formats {
-  margin-top: 0.5rem;
-  font-size: 80%;
+
+img {
+  max-width: 90%;
+  max-height: 100%;
 }

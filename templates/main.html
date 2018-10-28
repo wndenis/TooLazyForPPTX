@@ -17,16 +17,20 @@
             <!--<br>-->
         <!--</div>-->
         <div class="add-info">
-            <div style="position: absolute; top: 16px; text-align: center; font-size: 48pt">
+            <div>
                 <span id="dyntitle"></span>
             </div>
 
-            <div style="position: absolute; left: 15px; text-align: left; font-size: 36pt">
+            <div>
                 <span id="dyntext"></span>
             </div>
 
-            <div style="position: absolute; right: 15px">
+            <div>
                 <span id="dynimg"><img src=""> </span>
+            </div>
+
+            <div>
+                <span id="timer"></span>
             </div>
         </div>
         <script>
@@ -99,9 +103,11 @@
                     //sendData("TEST")
                     // GET DATA
                     httpGetAsync("/update", response)
-                  }, 250);
+                  }, 175);
 
         </script>
+        <p id="demo"></p>
+
         <!--<script src="/static/recorder.js"></script>-->
         <!--<script type="text/javascript">-->
         <!--//webkitURL is deprecated but nevertheless-->

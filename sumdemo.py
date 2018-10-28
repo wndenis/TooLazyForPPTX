@@ -12,7 +12,7 @@ from sumy.utils import get_stop_words
 
 
 LANGUAGE = "english"
-SENTENCES_COUNT = 45
+SENTENCES_COUNT = 2
 
 
 if __name__ == "__main__":
