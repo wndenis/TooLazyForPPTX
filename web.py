@@ -5,10 +5,14 @@ from flask.json import jsonify
 import os
 import uuid
 import Speech
-
+from google_images_download import google_images_download
 TEXT = ""
+SIMPLIFIED_TEXT = ""
 TITLE = ""
+IMAGE_ENTITY = ""
 IMAGE_LINK = ""
+
+img_google_response = google_images_download.googleimagesdownload()
 
 app = Flask(__name__)
 
@@ -26,7 +30,7 @@ def index():
 @app.route('/update', methods=["GET", "POST"])
 def getSlides():
     print("SENDING: " + TEXT)
-    return jsonify({"text": TEXT, "title": TITLE, "image_link": IMAGE_LINK})
+    return jsonify({"text": TEXT, "title": TITLE, "image_link": IMAGE_LINK, "simplified_text": SIMPLIFIED_TEXT})
 
 # @app.route('/auth/', methods=['GET'])
 # def auth():
@@ -132,7 +136,7 @@ class MicrophoneStream(object):
 
 
 def listen_print_loop(responses):
-    global TEXT
+    global TEXT, IMAGE_ENTITY, TITLE, IMAGE_LINK, SIMPLIFIED_TEXT
     """Iterates through server responses and prints them.
 
     The responses passed is a generator that will block until a response
@@ -183,18 +187,30 @@ def listen_print_loop(responses):
             # one of our keywords.
             num_chars_printed = 0
         if re.search(r'\b(следующий слайд|далее)\b', transcript, re.I):
-            transcript = "     "
-        if re.search(r'\b(exit|quit|следующий слайд)\b', transcript, re.I):
-            transcript = "     "
-        imgres = re.search("изображени[ея] ([\wа-яА-Я]+)", transcript, re.I)
-        if imgres:
-            print("*" * 60)
-            entity = imgres.group(1)
-            print(entity)
-            transcript = re.sub("изображени[ея] ([\wа-яА-Я]+)", "", transcript)
+            transcript = "  "
+            TITLE = "  "
+            IMAGE_LINK = "  "
+            IMAGE_ENTITY = "  "
+            SIMPLIFIED_TEXT = "  "
+
+        titleres = re.search("(заголовок) ([\wа-яА-Я]+)", transcript, re.I)
+        if titleres:
+            TITLE = titleres.group(1)
+            transcript = transcript[:titleres.start(1)] + transcript[titleres.end(1):]
             if len(transcript) == 0:
                 transcript = " "
+
+        imgres = re.search("(изображени[ея]|выглядит) ([\wа-яА-Я]+)", transcript, re.I)
+        if imgres:
+            print("*" * 60)
+            IMAGE_ENTITY = imgres.group(2)
+            transcript = transcript[:imgres.start(2)] + transcript[imgres.end(2):]
+            if len(transcript) == 0:
+                transcript = " "
+            IMAGE_LINK = img_google_response.download({"limit": 1, "keywords": IMAGE_ENTITY,
+                                                                 "time": "past-7-days", "print_urls": True})
             print("#######:\t" + transcript)
+
 
 
         #print("%s %s" % (transcript, len(transcript)))
@@ -231,11 +247,13 @@ def main():
 import threading
 import time
 def voiceControl():
-    try:
-        print("Voice started")
-        main()
-    except Exception as e:
-        print("restart voice: %s" % e)
+    while True:
+        try:
+            print("Voice started")
+            main()
+        except Exception as e:
+            print("restart voice: %s" % e)
+
 
 
 voice_thread = threading.Thread(target=voiceControl)

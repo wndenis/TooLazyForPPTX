@@ -17,17 +17,24 @@
             <!--<br>-->
         <!--</div>-->
         <div class="add-info">
-            <div style="text-align: center; font-size: 48pt">
+            <div style="position: absolute; top: 16px; text-align: center; font-size: 48pt">
                 <span id="dyntitle"></span>
             </div>
 
-            <div style="text-align: left; font-size: 36pt">
+            <div style="position: absolute; left: 15px; text-align: left; font-size: 36pt">
                 <span id="dyntext"></span>
+            </div>
+
+            <div style="position: absolute; right: 15px">
+                <span id="dynimg"><img src=""> </span>
             </div>
         </div>
         <script>
-            function updateDynText(id, text) {
-                document.getElementById(id).innerHTML = text;
+            function updateDynText(id, text, img=false) {
+                if (!img)
+                    document.getElementById(id).innerHTML = text;
+                else
+                    document.getElementById(id).innerHTML = "<img src=\"" + text + "\">"
             }
             function httpGetAsync(theUrl, callback)
             {
@@ -45,6 +52,7 @@
                 let parsedtext = JSON.parse(text);
                 updateDynText("dyntext", parsedtext["text"]);
                 updateDynText("dyntitle", parsedtext["title"]);
+                updateDynText("dynimg", parsedtext["image_link"], true);
                 console.log(parsedtext);
             }
 
