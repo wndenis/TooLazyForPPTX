@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <title>Presenter</title>
+  <script>
+      // function register(){
+      //   var url = "http://localhost:";
+      //   var audio = "audioFileXXX"
+      // }
+
+      // superagent
+      //   .post(url)
+      //   .send(user)
+      //   .end(function(err,res){
+      //     if (err || !res.ok) {
+      //       console.log('not ok:');
+      //       console.log(err);
+      //       console.log(res);
+      //     } else {
+      //       console.log('ok:');
+      //       console.log(res.body);
+
+            
+      //     }
+      //   })
+      
+      
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          const mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          const audioChunks = [];
+          mediaRecorder.addEventListener("dataavailable", event => {
+            audioChunks.push(event.data);
+          });
+
+          mediaRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks);
+            
+          });
+
+    
+
+          setTimeout(() => {
+            mediaRecorder.stop();
+            console.log("done");
+          }, 3000);
+        });
+      </script>
+</head>
+  <body>
+    <div class="container">
+      <div class="title">Presentation</div>
+      <button class="button">Start</button>
+    </div>
+    
+    </body>
+</html>
