@@ -1,3 +1,6 @@
+### Winner of HACK.MOSCOW 2.0  
+https://devpost.com/software/toolazyforpptx
+
 TooLazyForPPTX
 
 Use your voice to create presentation as you speak. Use keywords to clear and switch slides. Declare a title of slide. Use images from the Internet
